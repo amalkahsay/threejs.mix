@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - animation - skinning</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/happy2h/3JS_CDN/examples/main.css">
+		<style>
+			body { margin: 0; }
+
+		</style>
+	</head>
+	<body>
+		<div id="overlay">
+			<button id="startButton">Start Demo</button>
+		</div>
+		<div id="container"></div>
+		<div id="info">
+		<button class="ss" type="button">Click Me!</button>
+		<!-- <div class="rectangle"></div>
+		<div class="rectangle"></div>
+		<div class="rectangle"></div>
+		<div class="rectangle"></div>
+		<div class="rectangle"></div> -->
+		<row>
+	    <col>
+		<div class="circle"></div>
+		<div class="circle"></div>
+	 </col>
+	</row>
+		</div>
+		<style>
+			.circle{
+			
+			margin-top: 30px;
+			border-radius: 80px;
+			  height: 150px;
+			  width: 150px;
+			  background-color: rgba(7, 214, 221, 0.548);
+			}
+			.rectangle {
+				margin-top: 30px;
+			    border-radius: 80px;
+			  height: 150px;
+			  width: 400px;
+			  background-color: rgba(7, 214, 221, 0.548);
+			}
+			</style>
+
+			<a href="index.html">webgl_animation_skinning_blending.html</a>
+
+
+		<script type="module">
+
+			import * as THREE from '../build/three.module.js';
+
+			import { DeviceOrientationControls } from './jsm/controls/DeviceOrientationControls.js';
+
+			let camera, scene, renderer, controls;
+
+			const startButton = document.getElementById( 'startButton' );
+			startButton.addEventListener( 'click', function () {
+
+
+			} );
+			</script> 
+</body>
+</html>

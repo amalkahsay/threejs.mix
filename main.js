@@ -3,7 +3,24 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
+import { GUI } from '/resources/dat.gui.module.js';
+import Stats from '/resources/examples/jsm/libs/stats.module.js';
+ import * as dat from 'dat.gui'
+// import * as GUI from 'babylonjs-gui';
+// import * as BABYLON from 'babylonjs';
+// import { Scene, Engine } from 'babylonjs';
+const gui = new dat.GUI()
+let scene, renderer, camera, stats;
+let model, skeleton, mixer, clock;
 
+const crossFadeControls = [];
+
+let idleAction, walkAction, runAction;
+let idleWeight, walkWeight, runWeight;
+let actions, settings;
+
+let singleStepMode = false;
+let sizeOfNextStep = 0;
 
 class BasicCharacterControls {
   constructor(params) {
@@ -28,44 +45,44 @@ class BasicCharacterControls {
 
   _onKeyDown(event) {
     switch (event.keyCode) {
-      case 87: // w
+      case 87:  w
         this._move.forward = true;
         break;
-      case 65: // a
+      case 65:  a
         this._move.left = true;
         break;
-      case 83: // s
+      case 83:  s
         this._move.backward = true;
         break;
-      case 68: // d
+      case 68:  d
         this._move.right = true;
         break;
-      case 38: // up
-      case 37: // left
-      case 40: // down
-      case 39: // right
+      case 38:  up
+      case 37:  left
+      case 40:  down
+      case 39:  right
         break;
     }
   }
 
   _onKeyUp(event) {
     switch(event.keyCode) {
-      case 87: // w
+      case 87: w
         this._move.forward = false;
         break;
-      case 65: // a
+      case 65:  a
         this._move.left = false;
         break;
-      case 83: // s
+      case 83:  s
         this._move.backward = false;
         break;
-      case 68: // d
+      case 68:  d
         this._move.right = false;
         break;
-      case 38: // up
-      case 37: // left
-      case 40: // down
-      case 39: // right
+      case 38:  up
+      case 37:  left
+      case 40:  down
+      case 39:  right
         break;
     }
   }
@@ -185,12 +202,7 @@ class LoadModelDemo {
 
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-        './resources/posx.jpg',
-        './resources/negx.jpg',
-        './resources/posy.jpg',
-        './resources/negy.jpg',
-        './resources/posz.jpg',
-        './resources/negz.jpg',
+      
     ]);
     this._scene.background = texture;
 
@@ -213,14 +225,14 @@ class LoadModelDemo {
     // this._LoadAnimatedModelAndPlay(
     //     './resources/dancer/', 'dancer.fbx', 'Silly Dancing.fbx', new THREE.Vector3(12, 0, -10));
     // this._LoadAnimatedModelAndPlay(
-    //     './resources/dancer/', 'dancer.fbx', 'Silly Dancing.fbx', new THREE.Vector3(-12, 0, -10));
+    //     './resources/dancer/', 'dancer.fbx', 'Silly Dancing.fbx', new THREE.Vector3(2, 0, 10));
     this._RAF();
   }
 
   _LoadAnimatedModel() {
     const loader = new FBXLoader();
     loader.setPath('./resources/zombie/');
-    loader.load('mremireh_o_desbiens.fbx', (fbx) => {
+    loader.load('Ch44_nonPBR-3.fbx', (fbx) => {
       fbx.scale.setScalar(0.1);
       fbx.traverse(c => {
         c.castShadow = true;
@@ -234,15 +246,17 @@ class LoadModelDemo {
 
       const anim = new FBXLoader();
       anim.setPath('./resources/zombie/');
-      anim.load('walk.fbx', (anim) => {
+      anim.load('Walking.fbx', (anim) => {
         const m = new THREE.AnimationMixer(fbx);
         this._mixers.push(m);
         const idle = m.clipAction(anim.animations[0]);
         idle.play();
       });
+      
       this._scene.add(fbx);
     });
   }
+
 
   _LoadAnimatedModelAndPlay(path, modelFile, animFile, offset) {
     const loader = new FBXLoader();
@@ -266,15 +280,6 @@ class LoadModelDemo {
     });
   }
 
-  _LoadModel() {
-    const loader = new GLTFLoader();
-    loader.load('./resources/thing.glb', (gltf) => {
-      gltf.scene.traverse(c => {
-        c.castShadow = true;
-      });
-      this._scene.add(gltf.scene);
-    });
-  }
 
   _OnWindowResize() {
     this._camera.aspect = window.innerWidth / window.innerHeight;
@@ -314,3 +319,45 @@ let _APP = null;
 window.addEventListener('DOMContentLoaded', () => {
   _APP = new LoadModelDemo();
 });
+
+const pointLight = new THREE.PointLight(0xffffff, 0.1)
+pointLight.position.x = 2
+pointLight.position.y = 3
+pointLight.position.z = 4
+scene.add(pointLight)
+
+const pointLight2 = new THREE.PointLight(0xff0000, 0.2)
+// pointLight.position.x = 2
+// pointLight.position.y = 3
+// pointLight.position.z = 4
+pointLight2.position.set(1.26,1,1)
+pointLight2.intensity = 10
+scene.add(pointLight2)
+
+const Light1 = gui.addFolder('Light 1')
+Light1.add(pointLight2.position,'y').min(-3).max(3).step(0.01)
+Light1.add(pointLight2.position,'x').min(-3).max(3).step(0.01)
+Light1.add(pointLight2.position,'z').min(-3).max(3).step(0.01)
+Light1.add(pointLight2,'intensity').min(-3).max(3).step(0.01)
+
+const pointLightHelper = new THREE.PointLightHelper(pointLight2, 1)
+scene.add(pointLightHelper)
+
+
+
+const pointLight3 = new THREE.PointLight(0xffe1, 1)
+// pointLight.position.x = 2
+// pointLight.position.y = 3
+// pointLight.position.z = 4
+pointLight3.position.set(1,3,1)
+pointLight3.intensity = 10
+scene.add(pointLight3)
+const Light2 = gui.addFolder('Light 2')
+Light2.add(pointLight3.position,'y').min(-3).max(3).step(0.01)
+Light2.add(pointLight3.position,'x').min(-3).max(3).step(0.01)
+Light2.add(pointLight3.position,'z').min(-3).max(3).step(0.01)
+Light2.add(pointLight3,'intensity').min(-3).max(3).step(0.01)
+
+const Light2Color = {
+    color:0xff00000
+}
