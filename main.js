@@ -1,26 +1,60 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';// importing three.js 
 
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
-import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
-import { GUI } from '/resources/dat.gui.module.js';
-import Stats from '/resources/examples/jsm/libs/stats.module.js';
- import * as dat from 'dat.gui'
-// import * as GUI from 'babylonjs-gui';
-// import * as BABYLON from 'babylonjs';
-// import { Scene, Engine } from 'babylonjs';
-const gui = new dat.GUI()
+import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';// importing fbx loader 
+import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';// importing GLTFLoader (was not used)
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';// importing OrbitControls 
+import { GUI } from '/resources/examples/jsm/libs/dat.gui.module.js'; // importing gui controler
+import Stats from '/resources/examples/jsm/libs/stats.module.js'; // Stats module
+
 let scene, renderer, camera, stats;
 let model, skeleton, mixer, clock;
 
 const crossFadeControls = [];
 
-let idleAction, walkAction, runAction;
-let idleWeight, walkWeight, runWeight;
-let actions, settings;
 
 let singleStepMode = false;
 let sizeOfNextStep = 0;
+
+
+var slider = document.getElementById("slider");// define var that exist in html
+var selector = document.getElementById("selector");// define var that exist in html
+var SelectValue = document.getElementById("SelectValue");// define var that exist in html
+var ProgressBar = document.getElementById("ProgressBar");// define var that exist in html
+SelectValue.innerHTML=slider.value;
+// adding functions to the slider such as changing value
+slider.oninput = function(){
+  SelectValue.innerHTML=this.value;
+  selector.style.left = this.value + "%";
+  ProgressBar.style.width = this.value + "%";
+}
+// slider 2
+var slider1 = document.getElementById("slider1");
+var selector1 = document.getElementById("selector1");
+var SelectValue1 = document.getElementById("SelectValue1");
+var ProgressBar1 = document.getElementById("ProgressBar1");
+SelectValue1.innerHTML=slider1.value;
+
+slider1.oninput = function(){
+  SelectValue1.innerHTML=this.value;
+  selector1.style.left = this.value + "%";
+  ProgressBar1.style.width = this.value + "%";
+}
+// slider 3
+
+
+var slider2 = document.getElementById("slider2");
+var selector2 = document.getElementById("selector2");
+var SelectValue2 = document.getElementById("SelectValue2");
+var ProgressBar2 = document.getElementById("ProgressBar2");
+SelectValue2.innerHTML=slider2.value;
+
+slider2.oninput = function(){
+  SelectValue2.innerHTML=this.value;
+  selector2.style.left = this.value + "%";
+  ProgressBar2.style.width = this.value + "%";
+}
+
+
 
 class BasicCharacterControls {
   constructor(params) {
@@ -43,49 +77,7 @@ class BasicCharacterControls {
     document.addEventListener('keyup', (e) => this._onKeyUp(e), false);
   }
 
-  _onKeyDown(event) {
-    switch (event.keyCode) {
-      case 87:  w
-        this._move.forward = true;
-        break;
-      case 65:  a
-        this._move.left = true;
-        break;
-      case 83:  s
-        this._move.backward = true;
-        break;
-      case 68:  d
-        this._move.right = true;
-        break;
-      case 38:  up
-      case 37:  left
-      case 40:  down
-      case 39:  right
-        break;
-    }
-  }
-
-  _onKeyUp(event) {
-    switch(event.keyCode) {
-      case 87: w
-        this._move.forward = false;
-        break;
-      case 65:  a
-        this._move.left = false;
-        break;
-      case 83:  s
-        this._move.backward = false;
-        break;
-      case 68:  d
-        this._move.right = false;
-        break;
-      case 38:  up
-      case 37:  left
-      case 40:  down
-      case 39:  right
-        break;
-    }
-  }
+  
 
   Update(timeInSeconds) {
     const velocity = this._velocity;
@@ -121,7 +113,14 @@ class BasicCharacterControls {
       _Q.setFromAxisAngle(_A, -Math.PI * timeInSeconds * this._acceleration.y);
       _R.multiply(_Q);
     }
+    const stats = Stats()
+    document.body.appendChild(stats.dom)
+    
+   
+  //  gui._LoadAnimatedModel(_LoadAnimatedModel.rotation,"x",0,Math.PI*2)
 
+
+    
     controlObject.quaternion.copy(_R);
 
     const oldPosition = new THREE.Vector3();
@@ -174,10 +173,12 @@ class LoadModelDemo {
     this._camera.position.set(75, 20, 0);
 
     this._scene = new THREE.Scene();
+//editing the scnene 
+    let light = new THREE.DirectionalLight(0xFFFFFF, 20.0); // adding light 
+    light.position.set(20, 100, 10); // light position
+    light.target.position.set(0, 0, 0); //model position 
 
-    let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-    light.position.set(20, 100, 10);
-    light.target.position.set(0, 0, 0);
+    //Set up shadow properties for the light
     light.castShadow = true;
     light.shadow.bias = -0.001;
     light.shadow.mapSize.width = 2048;
@@ -192,26 +193,25 @@ class LoadModelDemo {
     light.shadow.camera.bottom = -100;
     this._scene.add(light);
 
-    light = new THREE.AmbientLight(0xFFFFFF, 4.0);
+    light = new THREE.AmbientLight(0xFFFFFF, 4.0);// adding light 
     this._scene.add(light);
 
+
+    ///Orbit controls allow the camera to orbit around a target.
     const controls = new OrbitControls(
       this._camera, this._threejs.domElement);
     controls.target.set(0, 20, 0);
-    controls.update();
+    controls.update();//controls.update() must be called after any manual changes to the camera's transform
 
-    const loader = new THREE.CubeTextureLoader();
-    const texture = loader.load([
-      
-    ]);
-    this._scene.background = texture;
-
+    ///adding the surface
+   this._scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
     const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100, 10, 10),
+        new THREE.PlaneGeometry(20, 20, 20, 20),
         new THREE.MeshStandardMaterial({
             color: 0x202020,
           }));
-    plane.castShadow = false;
+          //Create a plane that receives shadows (but does not cast them)
+    plane.castShadow = false;///a technique which approximates the effect you see
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
     this._scene.add(plane);
@@ -219,23 +219,19 @@ class LoadModelDemo {
     this._mixers = [];
     this._previousRAF = null;
 
-    this._LoadAnimatedModel();
-    // this._LoadAnimatedModelAndPlay(
-    //     './resources/dancer/', 'girl.fbx', 'dance.fbx', new THREE.Vector3(0, -1.5, 5));
-    // this._LoadAnimatedModelAndPlay(
-    //     './resources/dancer/', 'dancer.fbx', 'Silly Dancing.fbx', new THREE.Vector3(12, 0, -10));
-    // this._LoadAnimatedModelAndPlay(
-    //     './resources/dancer/', 'dancer.fbx', 'Silly Dancing.fbx', new THREE.Vector3(2, 0, 10));
-    this._RAF();
+    this._LoadAnimatedModel();///loading the models 
+   
+    this._RAF();/// requestAnimationFrame
   }
-
+//loading the fbx model
   _LoadAnimatedModel() {
-    const loader = new FBXLoader();
-    loader.setPath('./resources/zombie/');
-    loader.load('Ch44_nonPBR-3.fbx', (fbx) => {
-      fbx.scale.setScalar(0.1);
+    const loader = new FBXLoader(); //// fbx loader
+    loader.setPath('./resources/zombie/'); ////file path
+    loader.load('Ch44_nonPBR-3.fbx', (fbx) => {/////load the fbx model 
+      fbx.scale.setScalar(0.1);///size of the model 
       fbx.traverse(c => {
-        c.castShadow = true;
+        c.castShadow = true;///If set to true light will cast dynamic shadows
+        
       });
 
       const params = {
@@ -243,17 +239,20 @@ class LoadModelDemo {
         camera: this._camera,
       }
       this._controls = new BasicCharacterControls(params);
-
+//loading the animation 
       const anim = new FBXLoader();
       anim.setPath('./resources/zombie/');
-      anim.load('Walking.fbx', (anim) => {
-        const m = new THREE.AnimationMixer(fbx);
-        this._mixers.push(m);
+      anim.load('', (anim) => {
+        const m = new THREE.AnimationMixer(fbx);///AnimationMixer is a player for animations on a particular object in the scene
+        this._mixers.push(m); /// create an animation mixer 
         const idle = m.clipAction(anim.animations[0]);
-        idle.play();
+        idle.play();//start the animation 
+        // idle.pause();
       });
-      
-      this._scene.add(fbx);
+    
+    this._scene.add(fbx);
+
+    
     });
   }
 
@@ -273,9 +272,10 @@ class LoadModelDemo {
       anim.load(animFile, (anim) => {
         const m = new THREE.AnimationMixer(fbx);
         this._mixers.push(m);
-        const idle = m.clipAction(anim.animations[0]);
-        idle.play();
+        const idle = m.clipAction(anim.animations[0]);///An AnimationClip is a reusable set of keyframe tracks which represent an animation.
+        idle.play(); ///start the animation
       });
+      
       this._scene.add(fbx);
     });
   }
@@ -300,7 +300,7 @@ class LoadModelDemo {
       this._previousRAF = t;
     });
   }
-
+//speed of the animation
   _Step(timeElapsed) {
     const timeElapsedS = timeElapsed * 0.001;
     if (this._mixers) {
@@ -314,50 +314,10 @@ class LoadModelDemo {
 }
 
 
+
+
 let _APP = null;
 
 window.addEventListener('DOMContentLoaded', () => {
   _APP = new LoadModelDemo();
 });
-
-const pointLight = new THREE.PointLight(0xffffff, 0.1)
-pointLight.position.x = 2
-pointLight.position.y = 3
-pointLight.position.z = 4
-scene.add(pointLight)
-
-const pointLight2 = new THREE.PointLight(0xff0000, 0.2)
-// pointLight.position.x = 2
-// pointLight.position.y = 3
-// pointLight.position.z = 4
-pointLight2.position.set(1.26,1,1)
-pointLight2.intensity = 10
-scene.add(pointLight2)
-
-const Light1 = gui.addFolder('Light 1')
-Light1.add(pointLight2.position,'y').min(-3).max(3).step(0.01)
-Light1.add(pointLight2.position,'x').min(-3).max(3).step(0.01)
-Light1.add(pointLight2.position,'z').min(-3).max(3).step(0.01)
-Light1.add(pointLight2,'intensity').min(-3).max(3).step(0.01)
-
-const pointLightHelper = new THREE.PointLightHelper(pointLight2, 1)
-scene.add(pointLightHelper)
-
-
-
-const pointLight3 = new THREE.PointLight(0xffe1, 1)
-// pointLight.position.x = 2
-// pointLight.position.y = 3
-// pointLight.position.z = 4
-pointLight3.position.set(1,3,1)
-pointLight3.intensity = 10
-scene.add(pointLight3)
-const Light2 = gui.addFolder('Light 2')
-Light2.add(pointLight3.position,'y').min(-3).max(3).step(0.01)
-Light2.add(pointLight3.position,'x').min(-3).max(3).step(0.01)
-Light2.add(pointLight3.position,'z').min(-3).max(3).step(0.01)
-Light2.add(pointLight3,'intensity').min(-3).max(3).step(0.01)
-
-const Light2Color = {
-    color:0xff00000
-}

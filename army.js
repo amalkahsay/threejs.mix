@@ -70,7 +70,7 @@ class LoadModelDemo {
 
     this._scene = new THREE.Scene();
 
-    let light = new THREE.DirectionalLight( 0x202020, 100,40);
+    let light = new THREE.DirectionalLight( 0x202020, 400.40);
     light.position.set(20, 10, 10);
     light.target.position.set(550, 500, 550);
     light.castShadow = true;
@@ -101,7 +101,7 @@ class LoadModelDemo {
     this._scene.background = texture;
 
     const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(400, 100, 100),
+        new THREE.PlaneGeometry(200, 100, 100),
         new THREE.MeshStandardMaterial({
             color: 0x202020,
           }));
